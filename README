@@ -1,0 +1,4 @@
+These are some utility functions for parallel manipulation of flatfiles.  Because 
+of Go's ability to cross-compile 100% static binaries, it's very easy to distribute
+them to remote servers with arcane versions of GNU coreutils installed and use them
+as replacements for, eg, sort and shuffle (where the latter even exists).
