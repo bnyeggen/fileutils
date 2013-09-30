@@ -23,6 +23,8 @@ func shuffleOne(input string, out chan string, semaphore chan interface{}, wg *s
 	}
 	for _, v := range rand.New(rand.NewSource(time.Now().UTC().UnixNano())).Perm(len(lines)) {
 		out <- lines[v]
+		//Not necessary, but helpful to reduce memory pressure
+		lines[v] = ""
 	}
 	infile.Close()
 	wg.Done()
@@ -35,7 +37,6 @@ func shuffleOne(input string, out chan string, semaphore chan interface{}, wg *s
 // of nParShuffles), and concatenating them at the output file location.
 func ShufflePar(input string, output string, nTempFiles int, nParShuffles int) error {
 	rng := rand.New(rand.NewSource(time.Now().UTC().UnixNano()))
-	outchan := make(chan string, 1024)
 	tempFileNames := make([]string, nTempFiles)
 	tempFDs := make([]*os.File, nTempFiles)
 	tempWriters := make([]*bufio.Writer, nTempFiles)
@@ -63,6 +64,7 @@ func ShufflePar(input string, output string, nTempFiles int, nParShuffles int) e
 	var wg sync.WaitGroup
 	wg.Add(nTempFiles)
 	semaphore := make(chan interface{}, nParShuffles)
+	outchan := make(chan string, 1024)
 	for i := 0; i < nTempFiles; i++ {
 		tempWriters[i].Flush()
 		tempFDs[i].Close()
