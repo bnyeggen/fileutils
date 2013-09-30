@@ -135,6 +135,7 @@ func SortPar(input string, output string, nTempFiles int, nParSorts int) error {
 		//does a running partial sort, but that may not help the underlying
 		//golang sort routine.
 		tempWriters[i%nTempFiles].WriteString(inscanner.Text() + "\n")
+		i++
 	}
 	infile.Close()
 
